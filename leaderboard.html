@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#0a1628" />
+  <title>Leaderboard – EnglishIn28</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    .lb-main { padding: 1rem 1rem 2rem; max-width: 600px; margin: 0 auto; }
+    .lb-hero {
+      background: linear-gradient(135deg, var(--bg), var(--bg2));
+      border-radius: var(--r-lg); padding: 1.5rem; margin-bottom: 1.5rem;
+      text-align: center; color: #fff;
+    }
+    .lbh-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 0.25rem; }
+    .lbh-sub { font-size: 0.82rem; color: rgba(255,255,255,0.55); }
+    .lb-add-card {
+      background: #fff; border-radius: var(--r); padding: 1rem;
+      border: 1px solid var(--border); margin-bottom: 1.25rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .lb-add-label { font-size: 0.78rem; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
+    .lb-add-row { display: flex; gap: 0.5rem; }
+    .lb-name-input {
+      flex: 1; padding: 0.6rem 0.85rem; border: 1.5px solid var(--border);
+      border-radius: 8px; font-family: var(--font-ui); font-size: 0.9rem;
+      background: var(--surface2); color: var(--text);
+    }
+    .lb-name-input:focus { outline: none; border-color: var(--amber); }
+    .lb-submit-btn {
+      background: var(--amber); color: #000; font-weight: 700; font-size: 0.88rem;
+      padding: 0.6rem 1.1rem; border-radius: 8px; border: none; cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .lb-submit-btn:active { transform: scale(0.96); }
+    .lb-score-preview {
+      margin-top: 0.6rem; font-size: 0.78rem; color: var(--text2);
+      background: var(--surface2); border-radius: 8px; padding: 0.5rem 0.75rem;
+    }
+    .lb-list { }
+    .lb-empty { text-align: center; padding: 3rem 1rem; color: var(--text3); }
+    .lb-entry {
+      background: #fff; border-radius: var(--r); padding: 0.9rem 1rem;
+      margin-bottom: 0.7rem; border: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0.75rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      transition: transform 0.15s;
+    }
+    .lb-entry.rank-1 { border-color: #f59e0b; background: linear-gradient(135deg, #fffbf0, #fff); }
+    .lb-entry.rank-2 { border-color: #9ca3af; background: linear-gradient(135deg, #f9f9f9, #fff); }
+    .lb-entry.rank-3 { border-color: #cd7c45; background: linear-gradient(135deg, #fdf5f0, #fff); }
+    .lb-rank {
+      font-size: 1.3rem; font-weight: 800; min-width: 36px; text-align: center;
+    }
+    .lb-entry-info { flex: 1; }
+    .lb-entry-name { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+    .lb-entry-meta { font-size: 0.75rem; color: var(--text2); margin-top: 0.2rem; }
+    .lb-entry-score {
+      font-size: 1.1rem; font-weight: 800; color: var(--amber);
+      text-align: right;
+    }
+    .lb-entry-pts { font-size: 0.65rem; color: var(--text3); display: block; text-align: right; }
+    .score-formula {
+      font-size: 0.75rem; color: var(--text3); text-align: center;
+      margin-bottom: 1rem; background: #fff; border-radius: 8px; padding: 0.6rem;
+      border: 1px solid var(--border);
+    }
+    .section-eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; color: var(--text3); text-transform: uppercase; margin-bottom: 0.75rem; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <button class="topbar-back" onclick="window.location.href='progress.html'">←</button>
+    <div class="topbar-logo">🏆 Leaderboard</div>
+    <div class="topbar-right">
+      <span class="topbar-badge" id="lbCountBadge">0 players</span>
+    </div>
+  </header>
+
+  <main class="lb-main">
+    <div class="lb-hero">
+      <div style="font-size:2.5rem;margin-bottom:0.5rem">🏆</div>
+      <div class="lbh-title">Local Leaderboard</div>
+      <div class="lbh-sub">Compete with yourself and friends on this device</div>
+    </div>
+
+    <!-- Add score card -->
+    <div class="lb-add-card">
+      <div class="lb-add-label">Add Your Score</div>
+      <div class="lb-add-row">
+        <input type="text" class="lb-name-input" id="lbNameInput" placeholder="Enter your name…" maxlength="30" />
+        <button class="lb-submit-btn" onclick="submitScore()">Submit</button>
+      </div>
+      <div class="lb-score-preview" id="scorePreview"></div>
+    </div>
+
+    <div class="score-formula">
+      🧮 Score = (Lessons × 10) + (Streak × 5) + (Avg Quiz % × 2) + (Badges × 15)
+    </div>
+
+    <div class="section-eyebrow">Rankings</div>
+    <div id="lbList"></div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="bn-item"><span class="bn-icon">🏠</span><span class="bn-label">Home</span></a>
+    <a href="lessons.html" class="bn-item"><span class="bn-icon">📚</span><span class="bn-label">Lessons</span></a>
+    <a href="notebook.html" class="bn-item"><span class="bn-icon">📝</span><span class="bn-label">Notes</span></a>
+    <a href="progress.html" class="bn-item active"><span class="bn-icon">📊</span><span class="bn-label">Progress</span></a>
+  </nav>
+
+  <script src="script.js"></script>
+  <script>
+    const rankIcons = ['🥇','🥈','🥉'];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateScorePreview();
+      renderLeaderboard();
+    });
+
+    function updateScorePreview() {
+      const completed = getCompleted();
+      const quizScores = JSON.parse(localStorage.getItem('quizScores') || '{}');
+      const streak = calculateStreak();
+      const badges = JSON.parse(localStorage.getItem('earnedBadges') || '[]');
+      const totalQuizPct = Object.values(quizScores).reduce((s, q) => s + q.pct, 0);
+      const avgQuiz = Object.keys(quizScores).length > 0 ? Math.round(totalQuizPct / Object.keys(quizScores).length) : 0;
+      const score = (completed.length * 10) + (streak * 5) + (avgQuiz * 2) + (badges.length * 15);
+      document.getElementById('scorePreview').innerHTML =
+        `Your current score: <strong>${score} pts</strong> &nbsp;·&nbsp; ${completed.length} lessons &nbsp;·&nbsp; ${streak} streak &nbsp;·&nbsp; ${avgQuiz}% avg quiz &nbsp;·&nbsp; ${badges.length} badges`;
+    }
+
+    function submitScore() {
+      const name = document.getElementById('lbNameInput').value.trim();
+      if (!name) { document.getElementById('lbNameInput').focus(); return; }
+      addToLeaderboard(name);
+      document.getElementById('lbNameInput').value = '';
+      renderLeaderboard();
+    }
+
+    function renderLeaderboard() {
+      const board = getLeaderboard();
+      document.getElementById('lbCountBadge').textContent = `${board.length} player${board.length !== 1 ? 's' : ''}`;
+      const list = document.getElementById('lbList');
+
+      if (board.length === 0) {
+        list.innerHTML = `<div class="lb-empty">No scores yet.<br>Be the first to submit your score!</div>`;
+        return;
+      }
+
+      list.innerHTML = '';
+      board.forEach((entry, i) => {
+        const el = document.createElement('div');
+        el.className = `lb-entry ${i < 3 ? `rank-${i+1}` : ''}`;
+        el.innerHTML = `
+          <div class="lb-rank">${rankIcons[i] || `#${i+1}`}</div>
+          <div class="lb-entry-info">
+            <div class="lb-entry-name">${escapeHtml(entry.name)}</div>
+            <div class="lb-entry-meta">${entry.lessons} lessons · ${entry.streak}🔥 streak · ${entry.avgQuiz}% quiz · ${entry.badges} badges</div>
+          </div>
+          <div>
+            <div class="lb-entry-score">${entry.score}</div>
+            <span class="lb-entry-pts">points</span>
+          </div>
+        `;
+        list.appendChild(el);
+      });
+    }
+
+    function escapeHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    document.getElementById('lbNameInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') submitScore();
+    });
+  </script>
+</body>
+</html>

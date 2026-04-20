@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#0a1628" />
+  <title>EnglishIn28 – Learn English in 28 Days</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ===== TOP BAR ===== -->
+  <header class="topbar">
+    <div class="topbar-logo">EnglishIn<span>28</span></div>
+    <div class="topbar-right">
+      <span class="topbar-badge" id="topbarProgress">Free</span>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <main class="home-main">
+
+    <section class="hero">
+      <div class="hero-glow"></div>
+      <div class="hero-pill">🎓 Free · No login needed · Works offline</div>
+      <h1 class="hero-h1">Learn<br/><em>English</em><br/>in 28 Days</h1>
+      <p class="hero-p">One lesson a day. For O/L, A/L &amp; university students.</p>
+
+      <!-- Progress card (shown after starting) -->
+      <div class="progress-card" id="progressCard" style="display:none">
+        <div class="pc-top">
+          <span class="pc-label">Your progress</span>
+          <span class="pc-pct" id="pcPct">0%</span>
+        </div>
+        <div class="pc-bar-wrap"><div class="pc-bar" id="pcBar"></div></div>
+        <div class="pc-sub" id="pcSub">0 of 28 lessons done</div>
+      </div>
+
+      <button class="btn-hero" id="heroBtn" onclick="handleHeroBtn()">
+        <span id="heroBtnText">Start Day 1 →</span>
+      </button>
+      <a href="lessons.html" class="hero-link">Browse all lessons</a>
+    </section>
+
+    <!-- ===== WEEK PREVIEW CARDS ===== -->
+    <section class="weeks-section">
+      <div class="section-eyebrow">The 28-Day Plan</div>
+      <div class="weeks-scroll">
+        <div class="week-chip wc-1">
+          <div class="wchip-num">Week 1</div>
+          <div class="wchip-title">Foundations</div>
+          <div class="wchip-desc">Greetings · Sentences · Numbers · Family · Food · Present Tense</div>
+          <div class="wchip-count">7 lessons</div>
+        </div>
+        <div class="week-chip wc-2">
+          <div class="wchip-num">Week 2</div>
+          <div class="wchip-title">Building Up</div>
+          <div class="wchip-desc">Past · Future · Questions · Adjectives · Prepositions · Conversation</div>
+          <div class="wchip-count">7 lessons</div>
+        </div>
+        <div class="week-chip wc-3">
+          <div class="wchip-num">Week 3</div>
+          <div class="wchip-title">Real World</div>
+          <div class="wchip-desc">Shopping · Work · Storytelling · Emails · Idioms · Final Review</div>
+          <div class="wchip-count">7 lessons</div>
+        </div>
+        <div class="week-chip wc-4" style="background:linear-gradient(135deg,#1e3a5f,#162845);border:1px solid rgba(245,158,11,0.3)">
+          <div class="wchip-num" style="color:var(--amber)">Week 4 ✨</div>
+          <div class="wchip-title">Advanced</div>
+          <div class="wchip-desc">Business · Conditionals · Passive Voice · Phrasal Verbs · Academic Writing</div>
+          <div class="wchip-count">7 lessons</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== STATS ===== -->
+    <section class="stats-row">
+      <div class="stat-box"><div class="sb-num">28</div><div class="sb-lbl">Lessons</div></div>
+      <div class="stat-box"><div class="sb-num">280+</div><div class="sb-lbl">Words</div></div>
+      <div class="stat-box"><div class="sb-num">84</div><div class="sb-lbl">Quizzes</div></div>
+      <div class="stat-box"><div class="sb-num">Free</div><div class="sb-lbl">Forever</div></div>
+    </section>
+
+    <!-- ===== FEATURE LIST ===== -->
+    <section class="features-list">
+      <div class="section-eyebrow">What you get</div>
+      <div class="feat-item">
+        <div class="fi-icon">📚</div>
+        <div class="fi-text">
+          <div class="fi-title">Daily Lessons</div>
+          <div class="fi-desc">Short, focused lessons you can finish in 10–15 minutes</div>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="fi-icon">✏️</div>
+        <div class="fi-text">
+          <div class="fi-title">Practice Quizzes</div>
+          <div class="fi-desc">Multiple-choice after each lesson with instant feedback</div>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="fi-icon">📊</div>
+        <div class="fi-text">
+          <div class="fi-title">Progress Saved</div>
+          <div class="fi-desc">Tracks your completed lessons automatically on your device</div>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="fi-icon">📱</div>
+        <div class="fi-text">
+          <div class="fi-title">Works on Phone</div>
+          <div class="fi-desc">Designed for mobile — read on the bus, during breaks, anywhere</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="home-cta-wrap">
+      <button class="btn-primary full" onclick="handleHeroBtn()">Get Started Free →</button>
+    </div>
+
+    <div class="home-footer">
+      Built for Sri Lankan students · Free forever
+    </div>
+
+  </main>
+
+  <!-- ===== BOTTOM NAV ===== -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="bn-item active">
+      <span class="bn-icon">🏠</span>
+      <span class="bn-label">Home</span>
+    </a>
+    <a href="lessons.html" class="bn-item">
+      <span class="bn-icon">📚</span>
+      <span class="bn-label">Lessons</span>
+    </a>
+    <a href="quiz.html" class="bn-item">
+      <span class="bn-icon">✏️</span>
+      <span class="bn-label">Quiz</span>
+    </a>
+    <a href="progress.html" class="bn-item">
+      <span class="bn-icon">📊</span>
+      <span class="bn-label">Progress</span>
+    </a>
+  </nav>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const completed = getCompleted();
+      if (completed.length > 0) {
+        const total = Object.keys(LESSONS).length;
+        const pct = Math.round((completed.length / total) * 100);
+        document.getElementById('progressCard').style.display = 'block';
+        document.getElementById('pcBar').style.width = pct + '%';
+        document.getElementById('pcPct').textContent = pct + '%';
+        document.getElementById('pcSub').textContent = `${completed.length} of ${total} lessons done`;
+        document.getElementById('heroBtnText').textContent = `Continue Day ${Math.min(completed.length + 1, total)} →`;
+        document.getElementById('topbarProgress').textContent = pct + '%';
+        document.getElementById('topbarProgress').classList.add('has-progress');
+      }
+    });
+
+    function handleHeroBtn() {
+      const completed = getCompleted();
+      const total = Object.keys(LESSONS).length;
+      const next = Math.min(completed.length + 1, total);
+      window.location.href = `lessons.html?day=${next}`;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#0a1628" />
+  <title>Badges – EnglishIn28</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    .badges-main { padding: 1rem 1rem 2rem; max-width: 600px; margin: 0 auto; }
+    .badges-hero {
+      background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+      border-radius: var(--r-lg); padding: 1.5rem 1.25rem; margin-bottom: 1.5rem;
+      text-align: center; color: #fff;
+    }
+    .bh-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .bh-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 0.25rem; }
+    .bh-sub { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+    .bh-count {
+      display: inline-block; margin-top: 0.75rem;
+      background: var(--amber); color: #000;
+      font-size: 0.9rem; font-weight: 800; padding: 0.4rem 1.25rem;
+      border-radius: 99px;
+    }
+    .badges-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.85rem;
+    }
+    .badge-card {
+      background: #fff; border-radius: var(--r); padding: 1.1rem 0.9rem;
+      border: 2px solid var(--border); text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .badge-card.earned {
+      border-color: var(--amber); background: linear-gradient(135deg, #fffbf0, #fff);
+      box-shadow: 0 4px 16px rgba(245,158,11,0.15);
+    }
+    .badge-card.locked { opacity: 0.45; }
+    .badge-card.earned:active { transform: scale(0.97); }
+    .badge-earned-ribbon {
+      position: absolute; top: 8px; right: -12px;
+      background: var(--amber); color: #000; font-size: 0.6rem; font-weight: 800;
+      padding: 0.2rem 1.2rem; transform: rotate(45deg); letter-spacing: 0.5px;
+    }
+    .bc-icon { font-size: 2.2rem; margin-bottom: 0.5rem; display: block; }
+    .bc-name { font-size: 0.85rem; font-weight: 800; color: var(--text); margin-bottom: 0.25rem; }
+    .bc-desc { font-size: 0.72rem; color: var(--text2); line-height: 1.4; }
+    .bc-locked-icon {
+      position: absolute; top: 0.6rem; left: 0.6rem;
+      font-size: 0.85rem; color: var(--text3);
+    }
+    .section-eyebrow {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 1px;
+      color: var(--text3); text-transform: uppercase; margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <button class="topbar-back" onclick="window.location.href='progress.html'">←</button>
+    <div class="topbar-logo">🏅 Badges</div>
+    <div class="topbar-right">
+      <span class="topbar-badge" id="badgeCountBadge">0 earned</span>
+    </div>
+  </header>
+
+  <main class="badges-main">
+    <div class="badges-hero">
+      <div class="bh-icon">🏅</div>
+      <div class="bh-title">Achievement Badges</div>
+      <div class="bh-sub">Earn badges by completing lessons, quizzes, and streaks</div>
+      <div class="bh-count" id="bhCount">0 / 14 Earned</div>
+    </div>
+
+    <div class="section-eyebrow">Your Badges</div>
+    <div class="badges-grid" id="badgesGrid"></div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="bn-item"><span class="bn-icon">🏠</span><span class="bn-label">Home</span></a>
+    <a href="lessons.html" class="bn-item"><span class="bn-icon">📚</span><span class="bn-label">Lessons</span></a>
+    <a href="notebook.html" class="bn-item"><span class="bn-icon">📝</span><span class="bn-label">Notes</span></a>
+    <a href="progress.html" class="bn-item active"><span class="bn-icon">📊</span><span class="bn-label">Progress</span></a>
+  </nav>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const { earned } = getEarnedBadges();
+      document.getElementById('badgeCountBadge').textContent = `${earned.length} earned`;
+      document.getElementById('bhCount').textContent = `${earned.length} / ${BADGES.length} Earned`;
+
+      const grid = document.getElementById('badgesGrid');
+      BADGES.forEach(badge => {
+        const isEarned = earned.includes(badge.id);
+        const card = document.createElement('div');
+        card.className = `badge-card ${isEarned ? 'earned' : 'locked'}`;
+        card.innerHTML = `
+          ${isEarned ? '<div class="badge-earned-ribbon">EARNED</div>' : '<span class="bc-locked-icon">🔒</span>'}
+          <span class="bc-icon">${badge.icon}</span>
+          <div class="bc-name">${badge.name}</div>
+          <div class="bc-desc">${badge.desc}</div>
+        `;
+        grid.appendChild(card);
+      });
+    });
+  </script>
+</body>
+</html>

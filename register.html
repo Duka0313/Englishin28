@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#0a1628" />
+  <title>Register – EnglishIn28</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    .reg-main { padding: 1rem 1rem 2rem; max-width: 480px; margin: 0 auto; }
+    .reg-hero {
+      text-align: center; padding: 1.5rem 1rem 1rem;
+    }
+    .rh-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .rh-title { font-size: 1.35rem; font-weight: 800; color: var(--text); margin-bottom: 0.35rem; }
+    .rh-sub { font-size: 0.88rem; color: var(--text2); }
+    .reg-card {
+      background: #fff; border-radius: var(--r-lg); padding: 1.5rem;
+      border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      margin-top: 1.25rem;
+    }
+    .form-group { margin-bottom: 1.1rem; }
+    .form-label {
+      display: block; font-size: 0.78rem; font-weight: 700;
+      color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px;
+      margin-bottom: 0.4rem;
+    }
+    .form-input {
+      width: 100%; padding: 0.7rem 0.9rem; border: 1.5px solid var(--border);
+      border-radius: 10px; font-family: var(--font-ui); font-size: 0.92rem;
+      color: var(--text); background: var(--surface2);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .form-input:focus { outline: none; border-color: var(--amber); background: #fff; }
+    .form-input.error { border-color: var(--red); }
+    .form-error { font-size: 0.75rem; color: var(--red); margin-top: 0.35rem; display: none; }
+    .form-error.show { display: block; }
+    .form-select {
+      width: 100%; padding: 0.7rem 0.9rem; border: 1.5px solid var(--border);
+      border-radius: 10px; font-family: var(--font-ui); font-size: 0.92rem;
+      color: var(--text); background: var(--surface2);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23475569' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 0.9rem center;
+      transition: border-color 0.2s;
+    }
+    .form-select:focus { outline: none; border-color: var(--amber); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .checkbox-group { display: flex; align-items: flex-start; gap: 0.6rem; }
+    .form-checkbox { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--amber); flex-shrink: 0; }
+    .checkbox-label { font-size: 0.82rem; color: var(--text2); line-height: 1.5; }
+    .reg-divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
+    .reg-submit {
+      width: 100%; background: var(--amber); color: #000; font-weight: 800;
+      font-size: 1rem; padding: 0.9rem; border-radius: 12px; border: none;
+      cursor: pointer; transition: transform 0.1s, box-shadow 0.2s;
+      letter-spacing: -0.2px;
+    }
+    .reg-submit:hover { box-shadow: 0 4px 16px rgba(245,158,11,0.4); }
+    .reg-submit:active { transform: scale(0.98); }
+    .reg-login-link { text-align: center; margin-top: 1rem; font-size: 0.82rem; color: var(--text2); }
+    .reg-login-link a { color: var(--amber); font-weight: 700; }
+    /* Success state */
+    .reg-success {
+      display: none; text-align: center; padding: 2rem 1rem;
+    }
+    .reg-success.show { display: block; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+    .rs-icon { font-size: 4rem; margin-bottom: 1rem; }
+    .rs-title { font-size: 1.3rem; font-weight: 800; color: var(--text); margin-bottom: 0.5rem; }
+    .rs-sub { font-size: 0.88rem; color: var(--text2); margin-bottom: 1.5rem; line-height: 1.6; }
+    .rs-name { color: var(--amber); }
+    .strength-bar-wrap { height: 4px; background: var(--border); border-radius: 99px; margin-top: 0.4rem; overflow: hidden; }
+    .strength-bar { height: 100%; border-radius: 99px; transition: width 0.3s, background 0.3s; width: 0; }
+    .strength-label { font-size: 0.72rem; color: var(--text3); margin-top: 0.2rem; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <button class="topbar-back" onclick="window.location.href='index.html'">←</button>
+    <div class="topbar-logo">EnglishIn<span>28</span></div>
+    <div class="topbar-right">
+      <span class="topbar-badge">Register</span>
+    </div>
+  </header>
+
+  <main class="reg-main">
+    <div class="reg-hero">
+      <div class="rh-icon">🎓</div>
+      <div class="rh-title">Create Your Account</div>
+      <div class="rh-sub">Save your progress and access all features</div>
+    </div>
+
+    <!-- Form -->
+    <div class="reg-card" id="regCard">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="firstName">First Name</label>
+          <input type="text" class="form-input" id="firstName" placeholder="Amali" autocomplete="given-name" />
+          <div class="form-error" id="firstNameError">Please enter your first name.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="lastName">Last Name</label>
+          <input type="text" class="form-input" id="lastName" placeholder="Fernando" autocomplete="family-name" />
+          <div class="form-error" id="lastNameError">Please enter your last name.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <input type="email" class="form-input" id="email" placeholder="amali@example.com" autocomplete="email" />
+        <div class="form-error" id="emailError">Please enter a valid email address.</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="phone">Phone Number <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <input type="tel" class="form-input" id="phone" placeholder="07X XXX XXXX" autocomplete="tel" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="level">English Level</label>
+          <select class="form-select" id="level">
+            <option value="">Select…</option>
+            <option value="beginner">Beginner</option>
+            <option value="elementary">Elementary</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="upper">Upper Intermediate</option>
+          </select>
+          <div class="form-error" id="levelError">Please select your level.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="goal">Learning Goal</label>
+          <select class="form-select" id="goal">
+            <option value="">Select…</option>
+            <option value="olevel">O/L Exams</option>
+            <option value="alevel">A/L Exams</option>
+            <option value="university">University</option>
+            <option value="work">Work / Career</option>
+            <option value="travel">Travel</option>
+            <option value="general">General English</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input type="password" class="form-input" id="password" placeholder="At least 8 characters" autocomplete="new-password" />
+        <div class="strength-bar-wrap"><div class="strength-bar" id="strengthBar"></div></div>
+        <div class="strength-label" id="strengthLabel"></div>
+        <div class="form-error" id="passwordError">Password must be at least 8 characters.</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="confirmPw">Confirm Password</label>
+        <input type="password" class="form-input" id="confirmPw" placeholder="Re-enter password" autocomplete="new-password" />
+        <div class="form-error" id="confirmPwError">Passwords do not match.</div>
+      </div>
+
+      <div class="reg-divider"></div>
+
+      <div class="form-group">
+        <div class="checkbox-group">
+          <input type="checkbox" class="form-checkbox" id="reminders" checked />
+          <label class="checkbox-label" for="reminders">Send me daily lesson reminders (notifications)</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="checkbox-group">
+          <input type="checkbox" class="form-checkbox" id="agreeTerms" />
+          <label class="checkbox-label" for="agreeTerms">I agree to the Terms of Service and Privacy Policy</label>
+        </div>
+        <div class="form-error" id="termsError">You must agree to the terms to continue.</div>
+      </div>
+
+      <button class="reg-submit" onclick="submitRegForm()">Create Account →</button>
+      <div class="reg-login-link">Already registered? <a href="index.html">Back to Home</a></div>
+    </div>
+
+    <!-- Success state -->
+    <div class="reg-success" id="regSuccess">
+      <div class="rs-icon">🎉</div>
+      <div class="rs-title">Welcome, <span class="rs-name" id="rsName"></span>!</div>
+      <div class="rs-sub">Your account has been created successfully.<br>Your progress will now be saved to your profile.</div>
+      <button class="reg-submit" style="max-width:280px;margin:0 auto;display:block" onclick="window.location.href='index.html'">Start Learning →</button>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="bn-item active"><span class="bn-icon">🏠</span><span class="bn-label">Home</span></a>
+    <a href="lessons.html" class="bn-item"><span class="bn-icon">📚</span><span class="bn-label">Lessons</span></a>
+    <a href="notebook.html" class="bn-item"><span class="bn-icon">📝</span><span class="bn-label">Notes</span></a>
+    <a href="progress.html" class="bn-item"><span class="bn-icon">📊</span><span class="bn-label">Progress</span></a>
+  </nav>
+
+  <script src="script.js"></script>
+  <script>
+    // Password strength
+    document.getElementById('password').addEventListener('input', function() {
+      const pw = this.value;
+      const bar = document.getElementById('strengthBar');
+      const lbl = document.getElementById('strengthLabel');
+      let strength = 0;
+      if (pw.length >= 8) strength++;
+      if (pw.length >= 12) strength++;
+      if (/[A-Z]/.test(pw)) strength++;
+      if (/[0-9]/.test(pw)) strength++;
+      if (/[^A-Za-z0-9]/.test(pw)) strength++;
+
+      const levels = [
+        { w: '0%', color: 'transparent', text: '' },
+        { w: '25%', color: '#ef4444', text: 'Weak' },
+        { w: '50%', color: '#f59e0b', text: 'Fair' },
+        { w: '75%', color: '#10b981', text: 'Good' },
+        { w: '100%', color: '#10b981', text: 'Strong' }
+      ];
+      const lvl = Math.min(strength, 4);
+      bar.style.width = levels[lvl].w;
+      bar.style.background = levels[lvl].color;
+      lbl.textContent = levels[lvl].text;
+    });
+
+    function setError(id, show) {
+      const err = document.getElementById(id);
+      if (err) err.classList.toggle('show', show);
+    }
+
+    function clearErrors() {
+      document.querySelectorAll('.form-error').forEach(e => e.classList.remove('show'));
+      document.querySelectorAll('.form-input, .form-select').forEach(e => e.classList.remove('error'));
+    }
+
+    function submitRegForm() {
+      clearErrors();
+      let valid = true;
+
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const level = document.getElementById('level').value;
+      const password = document.getElementById('password').value;
+      const confirmPw = document.getElementById('confirmPw').value;
+      const agreeTerms = document.getElementById('agreeTerms').checked;
+      const reminders = document.getElementById('reminders').checked;
+
+      if (!firstName) { setError('firstNameError', true); document.getElementById('firstName').classList.add('error'); valid = false; }
+      if (!lastName) { setError('lastNameError', true); document.getElementById('lastName').classList.add('error'); valid = false; }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError('emailError', true); document.getElementById('email').classList.add('error'); valid = false; }
+      if (!level) { setError('levelError', true); document.getElementById('level').classList.add('error'); valid = false; }
+      if (password.length < 8) { setError('passwordError', true); document.getElementById('password').classList.add('error'); valid = false; }
+      if (password !== confirmPw) { setError('confirmPwError', true); document.getElementById('confirmPw').classList.add('error'); valid = false; }
+      if (!agreeTerms) { setError('termsError', true); valid = false; }
+
+      if (!valid) return;
+
+      // Save profile to localStorage
+      const profile = { firstName, lastName, email, level, goal: document.getElementById('goal').value, reminders, createdAt: new Date().toISOString() };
+      localStorage.setItem('userProfile', JSON.stringify(profile));
+
+      // Request notification permission if reminders enabled
+      if (reminders) {
+        requestNotificationPermission().then(perm => {
+          if (perm === 'granted') scheduleReminder(19, 0);
+        });
+      }
+
+      // Show success
+      document.getElementById('regCard').style.display = 'none';
+      document.getElementById('rsName').textContent = firstName;
+      document.getElementById('regSuccess').classList.add('show');
+    }
+  </script>
+</body>
+</html>

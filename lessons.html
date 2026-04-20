@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#0a1628" />
+  <title>Lessons – EnglishIn28</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <button class="topbar-back" onclick="window.location.href='index.html'">←</button>
+    <div class="topbar-logo">Lessons</div>
+    <div class="topbar-right">
+      <span class="topbar-badge" id="lessonProgress">0/21</span>
+    </div>
+  </header>
+
+  <!-- WEEK TABS (sticky) -->
+  <div class="week-tabs-sticky">
+    <div class="week-tabs" id="weekTabs">
+      <button class="week-tab active" data-week="1">Week 1</button>
+      <button class="week-tab" data-week="2">Week 2</button>
+      <button class="week-tab" data-week="3">Week 3</button>
+      <button class="week-tab" data-week="4">Week 4 ✨</button>
+    </div>
+    <!-- Mini progress bar -->
+    <div class="tabs-progress">
+      <div class="tabs-progress-fill" id="tabsProgressFill"></div>
+    </div>
+  </div>
+
+  <!-- WEEK DESCRIPTION -->
+  <div class="week-desc" id="weekDesc">
+    <div class="wd-title" id="wdTitle">Week 1 – Foundations</div>
+    <div class="wd-sub" id="wdSub">Basic vocabulary, sentences, and present tense</div>
+  </div>
+
+  <!-- LESSON LIST -->
+  <main class="lessons-list" id="lessonsList">
+    <!-- Populated by JS -->
+  </main>
+
+  <!-- ===== LESSON DRAWER (bottom sheet) ===== -->
+  <div class="drawer-overlay" id="drawerOverlay" style="display:none"></div>
+  <div class="lesson-drawer" id="lessonDrawer">
+    <div class="drawer-handle"></div>
+    <div class="drawer-header" id="drawerHeader">
+      <div class="dh-meta">
+        <span class="dh-day" id="dhDay">Day 1</span>
+        <span class="dh-type" id="dhType">Vocabulary</span>
+      </div>
+      <h2 class="dh-title" id="dhTitle">Lesson Title</h2>
+    </div>
+    <div class="drawer-body" id="drawerBody">
+      <!-- Dynamic content -->
+    </div>
+    <div class="drawer-footer">
+      <button class="btn-primary" id="markDoneBtn" onclick="markLessonDone()">✓ Mark Complete</button>
+      <button class="btn-outline" onclick="goToQuiz()">Quiz →</button>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="bn-item">
+      <span class="bn-icon">🏠</span><span class="bn-label">Home</span>
+    </a>
+    <a href="lessons.html" class="bn-item active">
+      <span class="bn-icon">📚</span><span class="bn-label">Lessons</span>
+    </a>
+    <a href="quiz.html" class="bn-item">
+      <span class="bn-icon">✏️</span><span class="bn-label">Quiz</span>
+    </a>
+    <a href="progress.html" class="bn-item">
+      <span class="bn-icon">📊</span><span class="bn-label">Progress</span>
+    </a>
+  </nav>
+
+  <script src="script.js"></script>
+  <script>
+    const WEEK_INFO = {
+      1: { title: "Week 1 – Foundations", sub: "Basic vocabulary, sentences, and present tense" },
+      2: { title: "Week 2 – Building Up", sub: "Past, future, questions, adjectives, and conversations" },
+      3: { title: "Week 3 – Real World", sub: "Shopping, work, storytelling, emails, and idioms" },
+      4: { title: "Week 4 – Advanced ✨", sub: "Business English, conditionals, passive voice, and more" }
+    };
+
+    let currentLesson = null;
+    let activeWeek = 1;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateProgressBadge();
+      setupWeekTabs();
+
+      const params = new URLSearchParams(window.location.search);
+      const day = parseInt(params.get('day'));
+      if (day && day >= 1 && day <= 28) {
+        const week = Math.ceil(day / 7);
+        switchWeek(week);
+        setTimeout(() => openLesson(day), 200);
+      } else {
+        renderLessons(1);
+      }
+    });
+
+    function updateProgressBadge() {
+      const c = getCompleted();
+      const total = Object.keys(LESSONS).length;
+      document.getElementById('lessonProgress').textContent = `${c.length}/${total}`;
+      document.getElementById('tabsProgressFill').style.width = `${(c.length / total) * 100}%`;
+    }
+
+    function setupWeekTabs() {
+      document.querySelectorAll('.week-tab').forEach(btn => {
+        btn.addEventListener('click', () => switchWeek(parseInt(btn.dataset.week)));
+      });
+    }
+
+    function switchWeek(week) {
+      activeWeek = week;
+      document.querySelectorAll('.week-tab').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.week-tab[data-week="${week}"]`).classList.add('active');
+      document.getElementById('wdTitle').textContent = WEEK_INFO[week].title;
+      document.getElementById('wdSub').textContent = WEEK_INFO[week].sub;
+      renderLessons(week);
+    }
+
+    function renderLessons(week) {
+      const start = (week - 1) * 7 + 1;
+      const end = week * 7;
+      const completed = getCompleted();
+      const list = document.getElementById('lessonsList');
+      list.innerHTML = '';
+
+      for (let day = start; day <= end; day++) {
+        const lesson = LESSONS[day];
+        if (!lesson) continue;
+        const isDone = completed.includes(day);
+        const isLocked = day > 1 && !completed.includes(day - 1) && !isDone;
+
+        const item = document.createElement('div');
+        item.className = `lesson-item ${isDone ? 'li-done' : ''} ${isLocked ? 'li-locked' : ''}`;
+        item.innerHTML = `
+          <div class="li-left">
+            <div class="li-circle ${isDone ? 'lc-done' : isLocked ? 'lc-locked' : 'lc-open'}">
+              ${isDone ? '✓' : isLocked ? '🔒' : day}
+            </div>
+          </div>
+          <div class="li-center">
+            <div class="li-day-label">Day ${day}</div>
+            <div class="li-title">${lesson.title}</div>
+            <div class="li-meta">${lesson.icon} ${lesson.type}</div>
+          </div>
+          <div class="li-right">
+            ${isDone
+              ? '<span class="li-tag done-tag">Done</span>'
+              : isLocked
+              ? '<span class="li-tag locked-tag">Locked</span>'
+              : '<span class="li-arrow">›</span>'
+            }
+          </div>
+        `;
+        if (!isLocked) item.addEventListener('click', () => openLesson(day));
+        list.appendChild(item);
+      }
+    }
+
+    function openLesson(day) {
+      currentLesson = day;
+      const lesson = LESSONS[day];
+      const isDone = getCompleted().includes(day);
+
+      document.getElementById('dhDay').textContent = `Day ${day}`;
+      document.getElementById('dhType').textContent = lesson.type;
+      document.getElementById('dhTitle').textContent = lesson.title;
+      document.getElementById('drawerBody').innerHTML = buildLessonContent(lesson);
+
+      const btn = document.getElementById('markDoneBtn');
+      btn.disabled = isDone;
+      btn.textContent = isDone ? '✓ Completed' : '✓ Mark Complete';
+      btn.className = isDone ? 'btn-done' : 'btn-primary';
+
+      // Swipe nav hint
+      const totalDays = Object.keys(LESSONS).length;
+      let swipeHtml = `<div class="drawer-swipe-hint">
+        <button class="swipe-nav-btn" onclick="navigateLesson(-1)" ${day <= 1 ? 'disabled' : ''}>← Day ${day-1}</button>
+        <span>${day} / ${totalDays}</span>
+        <button class="swipe-nav-btn" onclick="navigateLesson(1)" ${day >= totalDays ? 'disabled' : ''}>Day ${day+1} →</button>
+      </div>`;
+      document.getElementById('drawerBody').insertAdjacentHTML('afterend', 
+        document.querySelector('.drawer-swipe-hint') ? '' : swipeHtml);
+      // Replace existing
+      const existingHint = document.querySelector('.drawer-swipe-hint');
+      if (existingHint) existingHint.outerHTML = swipeHtml;
+      else document.getElementById('drawerBody').insertAdjacentHTML('afterend', swipeHtml);
+
+      document.getElementById('drawerOverlay').style.display = 'block';
+      document.getElementById('lessonDrawer').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function navigateLesson(dir) {
+      const totalDays = Object.keys(LESSONS).length;
+      const next = currentLesson + dir;
+      if (next < 1 || next > totalDays) return;
+      const newWeek = Math.ceil(next / 7);
+      if (newWeek !== activeWeek) switchWeek(newWeek);
+      openLesson(next);
+    }
+
+    function closeDrawer() {
+      document.getElementById('drawerOverlay').style.display = 'none';
+      document.getElementById('lessonDrawer').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function markLessonDone() {
+      if (!currentLesson) return;
+      const completed = getCompleted();
+      if (!completed.includes(currentLesson)) {
+        completed.push(currentLesson);
+        localStorage.setItem('completedLessons', JSON.stringify(completed));
+        const dates = JSON.parse(localStorage.getItem('lessonDates') || '{}');
+        dates[currentLesson] = new Date().toDateString();
+        localStorage.setItem('lessonDates', JSON.stringify(dates));
+        setTimeout(() => checkAndShowBadges(), 400);
+      }
+      closeDrawer();
+      updateProgressBadge();
+      renderLessons(activeWeek);
+    }
+
+    function goToQuiz() {
+      closeDrawer();
+      window.location.href = `quiz.html?day=${currentLesson}`;
+    }
+
+    document.getElementById('drawerOverlay').addEventListener('click', closeDrawer);
+
+    // Swipe gestures on drawer
+    let startY = 0, startX = 0;
+    document.getElementById('lessonDrawer').addEventListener('touchstart', e => {
+      startY = e.touches[0].clientY;
+      startX = e.touches[0].clientX;
+    });
+    document.getElementById('lessonDrawer').addEventListener('touchend', e => {
+      const dy = e.changedTouches[0].clientY - startY;
+      const dx = e.changedTouches[0].clientX - startX;
+      if (dy > 80 && Math.abs(dy) > Math.abs(dx)) {
+        closeDrawer();
+      } else if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) {
+        navigateLesson(dx < 0 ? 1 : -1);
+      }
+    });
+
+    function buildLessonContent(lesson) {
+      let html = `<div class="lesson-intro">${lesson.intro}</div>`;
+
+      if (lesson.type === 'Vocabulary') {
+        html += `<div class="vocab-list">`;
+        lesson.words.forEach((w, i) => {
+          html += `
+            <div class="vocab-row">
+              <div class="vr-num">${i + 1}</div>
+              <div class="vr-body">
+                <div class="vr-word">${w.word}</div>
+                <div class="vr-meaning">${w.meaning}</div>
+                <div class="vr-ex">"${w.example}"</div>
+              </div>
+            </div>`;
+        });
+        html += `</div>`;
+      } else if (lesson.type === 'Grammar' || lesson.type === 'Sentences') {
+        lesson.rules.forEach(r => {
+          html += `
+            <div class="rule-card">
+              <div class="rc-title">${r.title}</div>
+              <div class="rc-body">${r.body}</div>
+              ${r.examples ? `<div class="rc-examples">${r.examples.map(e => `<div class="rc-ex">→ ${e}</div>`).join('')}</div>` : ''}
+            </div>`;
+        });
+      } else if (lesson.type === 'Conversation') {
+        lesson.dialogues.forEach(d => {
+          html += `<div class="convo-context">${d.context}</div>`;
+          html += `<div class="convo-block">`;
+          d.lines.forEach(l => {
+            html += `<div class="convo-line cl-${l.speaker.toLowerCase().charAt(0)}">
+              <span class="cl-speaker">${l.speaker}</span>
+              <span class="cl-text">${l.text}</span>
+            </div>`;
+          });
+          html += `</div>`;
+        });
+      } else if (lesson.type === 'Review') {
+        lesson.points.forEach(p => {
+          html += `<div class="review-item"><div class="ri-title">${p.title}</div><div class="ri-body">${p.body}</div></div>`;
+        });
+      }
+      return html;
+    }
+  </script>
+</body>
+</html>

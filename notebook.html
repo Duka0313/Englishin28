@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#0a1628" />
+  <title>Notebook – EnglishIn28</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    .notebook-main { padding: 1rem 1rem 2rem; max-width: 600px; margin: 0 auto; }
+    .nb-add-card {
+      background: #fff; border-radius: var(--r-lg); padding: 1rem;
+      margin-bottom: 1.25rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+    }
+    .nb-add-label { font-size: 0.78rem; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
+    .nb-textarea {
+      width: 100%; min-height: 90px; resize: none;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      padding: 0.7rem 0.85rem; font-family: var(--font-ui);
+      font-size: 0.9rem; color: var(--text); background: var(--surface2);
+      transition: border-color 0.2s;
+    }
+    .nb-textarea:focus { outline: none; border-color: var(--amber); background: #fff; }
+    .nb-add-row { display: flex; gap: 0.5rem; margin-top: 0.6rem; align-items: center; }
+    .nb-day-select {
+      flex: 1; padding: 0.55rem 0.75rem; border: 1.5px solid var(--border);
+      border-radius: 8px; font-family: var(--font-ui); font-size: 0.82rem;
+      background: var(--surface2); color: var(--text);
+    }
+    .nb-add-btn {
+      background: var(--amber); color: #000; font-weight: 700; font-size: 0.88rem;
+      padding: 0.55rem 1.2rem; border-radius: 8px; border: none; cursor: pointer;
+      transition: transform 0.1s, background 0.2s;
+    }
+    .nb-add-btn:active { transform: scale(0.96); }
+    .nb-empty { text-align: center; padding: 3rem 1rem; color: var(--text3); }
+    .nb-empty-icon { font-size: 3rem; margin-bottom: 0.75rem; }
+    .nb-empty-text { font-size: 0.95rem; }
+    .note-card {
+      background: #fff; border-radius: var(--r); padding: 1rem;
+      margin-bottom: 0.85rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid var(--border); position: relative;
+      animation: noteIn 0.3s ease;
+    }
+    @keyframes noteIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+    .note-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+    .note-meta { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+    .note-day-badge {
+      font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.6rem;
+      background: var(--amber-dim); color: var(--amber); border-radius: 99px;
+    }
+    .note-date { font-size: 0.7rem; color: var(--text3); }
+    .note-delete {
+      color: var(--text3); font-size: 1.1rem; padding: 0.2rem 0.4rem;
+      border-radius: 6px; transition: color 0.2s, background 0.2s;
+      cursor: pointer; border: none; background: none;
+    }
+    .note-delete:hover { color: var(--red); background: var(--red-dim); }
+    .note-text { font-size: 0.9rem; line-height: 1.6; color: var(--text); white-space: pre-wrap; }
+    .nb-count { font-size: 0.78rem; color: var(--text3); text-align: center; margin-bottom: 1rem; }
+    .nb-filter-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; overflow-x: auto; padding-bottom: 2px; }
+    .nb-filter-btn {
+      flex-shrink: 0; padding: 0.4rem 0.85rem; border-radius: 99px;
+      font-size: 0.78rem; font-weight: 600; border: 1.5px solid var(--border);
+      background: #fff; color: var(--text2); cursor: pointer; transition: all 0.2s;
+    }
+    .nb-filter-btn.active { background: var(--amber); color: #000; border-color: var(--amber); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <button class="topbar-back" onclick="window.location.href='index.html'">←</button>
+    <div class="topbar-logo">📝 Notebook</div>
+    <div class="topbar-right">
+      <span class="topbar-badge" id="noteCountBadge">0 notes</span>
+    </div>
+  </header>
+
+  <main class="notebook-main">
+    <!-- Add note card -->
+    <div class="nb-add-card">
+      <div class="nb-add-label">New Note</div>
+      <textarea class="nb-textarea" id="noteInput" placeholder="Write a word, phrase, or anything you want to remember…"></textarea>
+      <div class="nb-add-row">
+        <select class="nb-day-select" id="noteDaySelect">
+          <option value="">No lesson tag</option>
+        </select>
+        <button class="nb-add-btn" onclick="addNote()">+ Add</button>
+      </div>
+    </div>
+
+    <!-- Filter row -->
+    <div class="nb-filter-row" id="filterRow">
+      <button class="nb-filter-btn active" data-filter="all" onclick="setFilter('all', this)">All</button>
+    </div>
+
+    <div class="nb-count" id="nbCount"></div>
+
+    <!-- Notes list -->
+    <div id="notesList"></div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="bn-item"><span class="bn-icon">🏠</span><span class="bn-label">Home</span></a>
+    <a href="lessons.html" class="bn-item"><span class="bn-icon">📚</span><span class="bn-label">Lessons</span></a>
+    <a href="notebook.html" class="bn-item active"><span class="bn-icon">📝</span><span class="bn-label">Notes</span></a>
+    <a href="progress.html" class="bn-item"><span class="bn-icon">📊</span><span class="bn-label">Progress</span></a>
+  </nav>
+
+  <script src="script.js"></script>
+  <script>
+    let currentFilter = 'all';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      populateDaySelect();
+      buildFilters();
+      renderNotes();
+    });
+
+    function populateDaySelect() {
+      const sel = document.getElementById('noteDaySelect');
+      for (let d = 1; d <= 28; d++) {
+        const lesson = LESSONS[d];
+        if (lesson) {
+          const opt = document.createElement('option');
+          opt.value = d;
+          opt.textContent = `Day ${d} – ${lesson.title}`;
+          sel.appendChild(opt);
+        }
+      }
+    }
+
+    function buildFilters() {
+      const notes = getNotebook();
+      const days = [...new Set(notes.map(n => n.lessonDay).filter(Boolean))].sort((a,b)=>a-b);
+      const row = document.getElementById('filterRow');
+      row.innerHTML = '<button class="nb-filter-btn active" data-filter="all" onclick="setFilter(\'all\', this)">All</button>';
+      days.forEach(d => {
+        const btn = document.createElement('button');
+        btn.className = 'nb-filter-btn';
+        btn.dataset.filter = d;
+        btn.textContent = `Day ${d}`;
+        btn.onclick = function() { setFilter(String(d), this); };
+        row.appendChild(btn);
+      });
+    }
+
+    function setFilter(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll('.nb-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderNotes();
+    }
+
+    function renderNotes() {
+      const notes = getNotebook();
+      const filtered = currentFilter === 'all' ? notes : notes.filter(n => String(n.lessonDay) === currentFilter);
+      
+      document.getElementById('noteCountBadge').textContent = `${notes.length} note${notes.length !== 1 ? 's' : ''}`;
+      document.getElementById('nbCount').textContent = filtered.length === 0 && currentFilter !== 'all'
+        ? '' : (filtered.length > 0 ? `${filtered.length} note${filtered.length !== 1 ? 's' : ''}` : '');
+
+      const list = document.getElementById('notesList');
+
+      if (filtered.length === 0) {
+        list.innerHTML = `
+          <div class="nb-empty">
+            <div class="nb-empty-icon">📓</div>
+            <div class="nb-empty-text">${currentFilter === 'all' ? 'No notes yet. Add your first note above!' : 'No notes for this lesson yet.'}</div>
+          </div>`;
+        return;
+      }
+
+      list.innerHTML = '';
+      filtered.forEach(note => {
+        const card = document.createElement('div');
+        card.className = 'note-card';
+        const dayLabel = note.lessonDay ? `<span class="note-day-badge">Day ${note.lessonDay}</span>` : '';
+        card.innerHTML = `
+          <div class="note-header">
+            <div class="note-meta">
+              ${dayLabel}
+              <span class="note-date">${note.date}</span>
+            </div>
+            <button class="note-delete" onclick="deleteNoteUI(${note.id})" title="Delete">✕</button>
+          </div>
+          <div class="note-text">${escapeHtml(note.text)}</div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function addNote() {
+      const text = document.getElementById('noteInput').value.trim();
+      if (!text) { document.getElementById('noteInput').focus(); return; }
+      const day = document.getElementById('noteDaySelect').value;
+      saveNote(text, day ? parseInt(day) : null);
+      document.getElementById('noteInput').value = '';
+      document.getElementById('noteDaySelect').value = '';
+      buildFilters();
+      renderNotes();
+    }
+
+    function deleteNoteUI(id) {
+      deleteNote(id);
+      buildFilters();
+      renderNotes();
+    }
+
+    // Allow Ctrl+Enter to submit
+    document.getElementById('noteInput').addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') addNote();
+    });
+  </script>
+</body>
+</html>

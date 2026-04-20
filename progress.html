@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#0a1628" />
+  <title>Progress – EnglishIn28</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="topbar">
+    <button class="topbar-back" onclick="window.location.href='index.html'">←</button>
+    <div class="topbar-logo">Progress</div>
+    <div class="topbar-right">
+      <button class="topbar-reset" id="resetBtn">Reset</button>
+    </div>
+  </header>
+
+  <main class="progress-main">
+
+    <!-- Big ring -->
+    <div class="prog-hero">
+      <div class="ring-wrap">
+        <svg class="ring-svg" viewBox="0 0 120 120">
+          <circle class="ring-bg" cx="60" cy="60" r="50"/>
+          <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="50"
+            stroke-dasharray="314" stroke-dashoffset="314"/>
+        </svg>
+        <div class="ring-inner">
+          <div class="ring-pct" id="ringPct">0%</div>
+          <div class="ring-lbl">complete</div>
+        </div>
+      </div>
+      <div class="prog-stats">
+        <div class="ps-item">
+          <div class="psi-num" id="psLessons">0</div>
+          <div class="psi-lbl">Lessons Done</div>
+        </div>
+        <div class="ps-item">
+          <div class="psi-num" id="psStreak">0</div>
+          <div class="psi-lbl">Day Streak 🔥</div>
+        </div>
+        <div class="ps-item">
+          <div class="psi-num" id="psQuizzes">0</div>
+          <div class="psi-lbl">Quizzes Taken</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Week progress bars -->
+    <div class="week-progress-section">
+      <div class="section-eyebrow">Week-by-Week</div>
+      <div class="week-prog-list" id="weekProgList"></div>
+    </div>
+
+    <!-- Day grid (21 circles) -->
+    <div class="day-grid-section">
+      <div class="section-eyebrow">All 21 Days</div>
+      <div class="day-grid" id="dayGrid"></div>
+    </div>
+
+    <!-- Quiz scores -->
+    <div class="quiz-scores-section" id="quizScoresSection">
+      <div class="section-eyebrow">Quiz Best Scores</div>
+      <div class="quiz-scores-list" id="quizScoresList"></div>
+    </div>
+
+    <!-- Extra feature links -->
+    <div class="extra-links-section">
+      <div class="section-eyebrow">Features</div>
+      <a href="badges.html" class="extra-link-card">
+        <div class="elc-icon">🏅</div>
+        <div class="elc-body">
+          <div class="elc-title">Achievement Badges</div>
+          <div class="elc-desc" id="badgeDesc">Earn badges for your progress</div>
+        </div>
+        <div class="elc-arrow">›</div>
+      </a>
+      <a href="leaderboard.html" class="extra-link-card">
+        <div class="elc-icon">🏆</div>
+        <div class="elc-body">
+          <div class="elc-title">Leaderboard</div>
+          <div class="elc-desc" id="lbDesc">See top scores on this device</div>
+        </div>
+        <div class="elc-arrow">›</div>
+      </a>
+      <a href="notebook.html" class="extra-link-card">
+        <div class="elc-icon">📝</div>
+        <div class="elc-body">
+          <div class="elc-title">My Notebook</div>
+          <div class="elc-desc" id="noteDesc">Your personal learning notes</div>
+        </div>
+        <div class="elc-arrow">›</div>
+      </a>
+      <a href="register.html" class="extra-link-card">
+        <div class="elc-icon">👤</div>
+        <div class="elc-body">
+          <div class="elc-title" id="profileTitle">Create Profile</div>
+          <div class="elc-desc" id="profileDesc">Save your account details</div>
+        </div>
+        <div class="elc-arrow">›</div>
+      </a>
+    </div>
+
+    <!-- Daily reminder settings -->
+    <div class="reminder-card">
+      <div class="rc-header">
+        <div class="rc-header-title">⏰ Daily Reminder</div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="reminderToggle" onchange="toggleReminder(this)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="reminder-time-row" id="reminderTimeRow" style="display:none">
+        Remind me at
+        <input type="time" class="reminder-time-input" id="reminderTime" value="19:00" onchange="updateReminderTime(this.value)">
+        daily
+      </div>
+      <div style="font-size:0.75rem;color:var(--text3);margin-top:0.4rem" id="reminderStatus">Enable to get a daily push notification</div>
+    </div>
+
+    <!-- Export data -->
+    <button class="export-btn" onclick="exportUserDataCSV()">
+      ⬇ Export My Progress (CSV)
+    </button>
+
+    <!-- Reset confirm -->
+    <div class="reset-confirm" id="resetConfirm" style="display:none">
+      <div class="rc-box">
+        <div class="rc-title">Reset all progress?</div>
+        <div class="rc-sub">This cannot be undone.</div>
+        <div class="rc-actions">
+          <button class="btn-danger" onclick="confirmReset()">Yes, Reset</button>
+          <button class="btn-outline" onclick="document.getElementById('resetConfirm').style.display='none'">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <nav class="bottom-nav bn-5">
+    <a href="index.html" class="bn-item"><span class="bn-icon">🏠</span><span class="bn-label">Home</span></a>
+    <a href="lessons.html" class="bn-item"><span class="bn-icon">📚</span><span class="bn-label">Lessons</span></a>
+    <a href="quiz.html" class="bn-item"><span class="bn-icon">✏️</span><span class="bn-label">Quiz</span></a>
+    <a href="notebook.html" class="bn-item"><span class="bn-icon">📝</span><span class="bn-label">Notes</span></a>
+    <a href="progress.html" class="bn-item active"><span class="bn-icon">📊</span><span class="bn-label">Progress</span></a>
+  </nav>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProgress();
+      initReminderUI();
+      updateFeatureDescs();
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      document.getElementById('resetConfirm').style.display = 'flex';
+    });
+
+    function confirmReset() {
+      ['completedLessons','lessonDates','quizScores','earnedBadges','notebook','leaderboard','reminderSettings','lastReminderDate'].forEach(k => localStorage.removeItem(k));
+      window.location.reload();
+    }
+
+    function updateFeatureDescs() {
+      const { earned } = getEarnedBadges();
+      document.getElementById('badgeDesc').textContent = `${earned.length} / ${BADGES.length} badges earned`;
+      const nb = getNotebook();
+      document.getElementById('noteDesc').textContent = nb.length > 0 ? `${nb.length} note${nb.length !== 1 ? 's' : ''} saved` : 'Your personal learning notes';
+      const board = getLeaderboard();
+      document.getElementById('lbDesc').textContent = board.length > 0 ? `${board.length} player${board.length !== 1 ? 's' : ''} on board` : 'Be the first to submit a score';
+      const profile = JSON.parse(localStorage.getItem('userProfile') || 'null');
+      if (profile) {
+        document.getElementById('profileTitle').textContent = `${profile.firstName} ${profile.lastName}`;
+        document.getElementById('profileDesc').textContent = profile.email;
+      }
+    }
+
+    function initReminderUI() {
+      const settings = getReminderSettings();
+      const toggle = document.getElementById('reminderToggle');
+      const timeRow = document.getElementById('reminderTimeRow');
+      const status = document.getElementById('reminderStatus');
+      if (settings && settings.enabled) {
+        toggle.checked = true;
+        timeRow.style.display = 'flex';
+        document.getElementById('reminderTime').value = `${String(settings.hour).padStart(2,'0')}:${String(settings.minute).padStart(2,'0')}`;
+        status.textContent = `Reminder set for ${document.getElementById('reminderTime').value} daily`;
+      } else {
+        if (Notification.permission === 'denied') {
+          status.textContent = 'Notifications blocked — enable in browser settings';
+        }
+      }
+    }
+
+    function toggleReminder(el) {
+      const timeRow = document.getElementById('reminderTimeRow');
+      const status = document.getElementById('reminderStatus');
+      if (el.checked) {
+        requestNotificationPermission().then(perm => {
+          if (perm === 'granted') {
+            timeRow.style.display = 'flex';
+            scheduleReminder(19, 0);
+            status.textContent = 'Reminder set for 19:00 daily';
+          } else {
+            el.checked = false;
+            timeRow.style.display = 'none';
+            status.textContent = perm === 'denied' ? 'Notifications blocked — enable in browser settings' : 'Permission needed for reminders';
+          }
+        });
+      } else {
+        disableReminder();
+        timeRow.style.display = 'none';
+        status.textContent = 'Enable to get a daily push notification';
+      }
+    }
+
+    function updateReminderTime(val) {
+      const [h, m] = val.split(':').map(Number);
+      scheduleReminder(h, m);
+      document.getElementById('reminderStatus').textContent = `Reminder set for ${val} daily`;
+    }
+
+    function renderProgress() {
+      const completed = getCompleted();
+      const total = Object.keys(LESSONS).length;
+      const pct = Math.round((completed.length / total) * 100);
+      const quizScores = JSON.parse(localStorage.getItem('quizScores') || '{}');
+      const quizCount = Object.keys(quizScores).length;
+      const streak = calculateStreak();
+
+      // Ring
+      const circumference = 314;
+      const offset = circumference - (pct / 100) * circumference;
+      document.getElementById('ringPct').textContent = pct + '%';
+      document.getElementById('ringFill').style.strokeDashoffset = offset;
+
+      // Stats
+      document.getElementById('psLessons').textContent = completed.length;
+      document.getElementById('psStreak').textContent = streak;
+      document.getElementById('psQuizzes').textContent = quizCount;
+
+      // Week bars – now 4 weeks
+      const weekList = document.getElementById('weekProgList');
+      const weekTitles = ['Foundations', 'Building Up', 'Real World', 'Advanced'];
+      [1, 2, 3, 4].forEach(w => {
+        const start = (w - 1) * 7 + 1;
+        const days = Array.from({ length: 7 }, (_, i) => start + i);
+        const done = days.filter(d => completed.includes(d)).length;
+        const wpct = Math.round((done / 7) * 100);
+        weekList.innerHTML += `
+          <div class="wp-row">
+            <div class="wp-label">Week ${w} – ${weekTitles[w - 1]}</div>
+            <div class="wp-bar-wrap"><div class="wp-bar" style="width:${wpct}%"></div></div>
+            <div class="wp-num">${done}/7</div>
+          </div>`;
+      });
+
+      // Day grid – now 28 days
+      const grid = document.getElementById('dayGrid');
+      for (let d = 1; d <= total; d++) {
+        const done = completed.includes(d);
+        const locked = d > 1 && !completed.includes(d - 1) && !done;
+        const div = document.createElement('div');
+        div.className = `dg-cell ${done ? 'dgc-done' : locked ? 'dgc-locked' : 'dgc-open'}`;
+        div.innerHTML = `<span>${done ? '✓' : d}</span><span class="dgc-lbl">Day ${d}</span>`;
+        div.addEventListener('click', () => {
+          if (!locked) window.location.href = `lessons.html?day=${d}`;
+        });
+        grid.appendChild(div);
+      }
+
+      // Quiz scores
+      const scoresList = document.getElementById('quizScoresList');
+      const scoreKeys = Object.keys(quizScores);
+      if (scoreKeys.length === 0) {
+        document.getElementById('quizScoresSection').style.display = 'none';
+      } else {
+        scoreKeys.sort((a,b) => Number(a)-Number(b)).forEach(day => {
+          const s = quizScores[day];
+          scoresList.innerHTML += `
+            <div class="qs-row" onclick="window.location.href='quiz.html?day=${day}'">
+              <div class="qsr-left">
+                <div class="qsr-day">Day ${day}</div>
+                <div class="qsr-title">${LESSONS[day] ? LESSONS[day].title : ''}</div>
+              </div>
+              <div class="qsr-right">
+                <div class="qsr-score">${s.score}/${s.total}</div>
+                <div class="qsr-pct ${s.pct >= 67 ? 'pct-good' : 'pct-low'}">${s.pct}%</div>
+              </div>
+            </div>`;
+        });
+      }
+    }
+  </script>
+</body>
+</html>
